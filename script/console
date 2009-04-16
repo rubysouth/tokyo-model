@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# File: script/console
+irb = RUBY_PLATFORM =~ /(:?mswin|mingw)/ ? 'irb.bat' : 'irb'
+
+libs =  " -r irb/completion"
+libs << " -r rubygems"
+libs <<  " -r #{File.dirname(__FILE__) + '/../lib/tokyo_model.rb'}"
+
+puts "Loading tokyo_model gem"
+exec "#{irb} #{libs} --simple-prompt"
