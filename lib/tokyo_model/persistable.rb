@@ -1,21 +1,21 @@
 module TokyoModel
-  
+
   module Persistable
-    
+
     def self.included(base)
       base.class_eval { extend TokyoModel::Persistable::ClassMethods }
     end
-    
+
     module ClassMethods
-      
-      def  connect(uri)
-        @db = TokyoModel::Database.open(uri)
+
+      def  connect(uri, *args)
+        @db = TokyoModel.open(uri, *args)
       end
 
       def db
         @db ||= TokyoModel::DATABASES.first
       end
-    
+
       def get(id)
         obj = new
         if record = db.get(id)
@@ -29,37 +29,37 @@ module TokyoModel
       def setter_methods
         instance_methods.select {|m| m =~ /[^=]$/ && instance_methods.include?("#{m}=") && !%w(taguri).include?(m) }
       end
-      
+
     end
-    
+
     def ==(obj)
-      self.class == obj.class && id == obj.id 
+      self.class == obj.class && id == obj.id
     end
 
     def attributes
-      self.class.setter_methods.inject({}) do |m, o| 
+      self.class.setter_methods.inject({}) do |m, o|
         v = send(o.to_sym)
         m[o] = v if v
         m
       end
     end
-  
+
     def db
       self.class.db
     end
-  
+
     def id
       @id ||= db.genuid
     end
-  
+
     def id=(id)
       @id = id
     end
-  
+
     def put
       db.put(id, attributes)
     end
     alias_method :save, :put
-  
+
   end
 end

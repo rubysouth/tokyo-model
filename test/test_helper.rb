@@ -1,4 +1,5 @@
 $VERBOSE = false
+require 'rubygems'
 require 'fileutils'
 require 'test/unit'
 require 'contest'
