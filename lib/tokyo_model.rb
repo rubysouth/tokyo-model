@@ -1,12 +1,14 @@
 $:.unshift(File.dirname(__FILE__)) unless $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 require 'uri'
+require 'tokyocabinet'
 require 'tokyo_model/persistable'
 require 'tokyo_model/adapters/abstract_adapter'
+require 'tokyo_model/query'
 
 module TokyoModel
 
-  VERSION = '0.0.2'
+  VERSION = '0.0.3'
   ADAPTERS = [:file, :tyrant].freeze
   DATABASES = []
 
@@ -24,6 +26,10 @@ module TokyoModel
 
   def self.close
     DATABASES.each { |d| d.close }
+  end
+  
+  def self.query
+    Query.new(DATABASES.first)
   end
 
   private

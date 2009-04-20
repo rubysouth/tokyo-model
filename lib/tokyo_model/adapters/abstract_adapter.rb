@@ -1,12 +1,16 @@
 module TokyoModel
   module Adapters
 
-    # This class exists almost exclusively to indicate the methods that all
+    # This class exists almost exclusively to document the methods that all
     # adapters must implement. The default implementation simply delegates
     # everything to the underlying database file or connection.
     class AbstractAdapter
 
       attr :db
+      
+      def connection
+        @db
+      end
 
       # Delete the record identified by +pkey+.
       def out(pkey)
@@ -30,11 +34,11 @@ module TokyoModel
       end
 
       # Perform a query.
-      def query(*args)
-        raise NotImplementedError.new
+      def query
+        Query.new(db)
       end
 
-      # Delegate any unknown method calls to the underlying @db.
+      # Delegate any unknown method calls to the underlying +@db+.
       def method_missing(symbol, *args)
         @db.send(symbol, *args)
       end

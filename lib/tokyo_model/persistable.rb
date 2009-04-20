@@ -8,8 +8,13 @@ module TokyoModel
 
     module ClassMethods
 
-      def  connect(uri, *args)
-        @db = TokyoModel.open(uri, *args)
+      def  db=(*args)
+        db_or_uri = args.shift
+        if db_or_uri.respond_to?(:scheme)
+          @db = TokyoModel.open(db_or_uri, *args)
+        else
+          @db = db_or_uri
+        end
       end
 
       def db
@@ -19,7 +24,7 @@ module TokyoModel
       def get(id)
         obj = new
         if record = db.get(id)
-          record.each { |k, v| obj.send("#{k}=".to_sym, v) }
+          record.each { |k, v| obj.send("#{k}=".to_sym, v) if obj.respond_to?("#{k}=".to_sym) }
           obj.id = id
         end
         obj
@@ -29,6 +34,15 @@ module TokyoModel
       def setter_methods
         instance_methods.select {|m| m =~ /[^=]$/ && instance_methods.include?("#{m}=") && !%w(taguri).include?(m) }
       end
+      
+      def find(&block)
+        ids = query.conditions(&block).execute
+        ids.inject([]) { |m, o| m << get(o); m }
+      end
+      
+      def query
+        Query.new(db).conditions { type_is "Post" }
+      end
 
     end
 
@@ -37,11 +51,11 @@ module TokyoModel
     end
 
     def attributes
-      self.class.setter_methods.inject({}) do |m, o|
+      self.class.setter_methods.inject({}) { |m, o|
         v = send(o.to_sym)
         m[o] = v if v
         m
-      end
+      }
     end
 
     def db
@@ -57,7 +71,7 @@ module TokyoModel
     end
 
     def put
-      db.put(id, attributes)
+      db.put(id, attributes.merge({ "type" => self.class.to_s }))
     end
     alias_method :save, :put
 

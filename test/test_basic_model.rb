@@ -1,27 +1,15 @@
 require 'test_helper'
-require File.dirname(__FILE__) + "/fixtures/post.rb"
 
 class TestBasicModel < Test::Unit::TestCase
 
   setup do
-    TokyoModel.open("file:#{dbpath}", :write, :read, :create, :truncate)
-    @post = Post.new
-    @post.title = "First post!"
-    @post.body = "Lorem ipsum dolor sit amet, consectetur adipisicing elit"
-    @post.author = "John Doe"
-    @post.permalink = "http://example.org/posts/1"
-    @post.put
-  end
-
-  teardown do
-    TokyoModel.close
-    FileUtils.rm_f dbpath
+    load_fixtures
   end
 
   context "a model" do
 
     should "have a db connection" do
-      assert_not_nil Post.db
+      assert Post.db.respond_to?(:get)
     end
 
     should "be gettable" do

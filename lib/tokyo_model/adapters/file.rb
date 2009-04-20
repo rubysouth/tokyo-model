@@ -1,5 +1,3 @@
-require 'tokyocabinet'
-
 module TokyoModel
   module Adapters
 
