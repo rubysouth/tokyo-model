@@ -16,10 +16,14 @@ module TokyoModel
       def initialize(uri, *args)
         @db = TokyoTyrant::RDBTBL::new
         if uri.scheme == "unix"
-          @db.open(uri.path, 0)
+          @db.open(uri.path, 0) || raise(ConnectionError.new(@db.errmsg(@db.ecode)))
         else
-          @db.open(uri.host, uri.port || DEFAULT_PORT)
+          @db.open(uri.host, uri.port || DEFAULT_PORT) || raise(ConnectionError.new(@db.errmsg(@db.ecode)))
         end
+      end
+
+      def query
+        Query.new(TokyoTyrant::RDBQRY.new(@db))
       end
 
     end

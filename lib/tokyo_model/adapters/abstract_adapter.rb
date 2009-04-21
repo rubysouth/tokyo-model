@@ -1,13 +1,15 @@
 module TokyoModel
   module Adapters
 
+    class ConnectionError < StandardError ; end
+
     # This class exists almost exclusively to document the methods that all
     # adapters must implement. The default implementation simply delegates
     # everything to the underlying database file or connection.
     class AbstractAdapter
 
       attr :db
-      
+
       def connection
         @db
       end
@@ -35,7 +37,7 @@ module TokyoModel
 
       # Perform a query.
       def query
-        Query.new(db)
+        raise NotImplementedError.new
       end
 
       # Delegate any unknown method calls to the underlying +@db+.

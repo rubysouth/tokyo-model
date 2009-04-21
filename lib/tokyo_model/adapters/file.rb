@@ -1,9 +1,10 @@
+require 'tokyocabinet'
+
 module TokyoModel
   module Adapters
 
     # This adapter provides access to TokyoCabinet TDB files.
     class File < AbstractAdapter
-
 
       # Permitted open modes for accessing TDB files: +:read+, +:write+,
       # +:create+, +:truncate+, +:nolock+, +:lock_noblock+ and +:sync+
@@ -24,6 +25,10 @@ module TokyoModel
       def initialize(uri, *args)
         @db = TokyoCabinet::TDB::new
         @db.open(uri.path, args.empty? ? File.default_open_mode : File.open_mode(*args))
+      end
+
+      def query
+        Query.new(TokyoCabinet::TDBQRY.new(@db))
       end
 
       class << self

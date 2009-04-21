@@ -46,7 +46,7 @@ module TokyoModel
 
       def query
         type = self.to_s
-        Query.new(db).conditions { type_is type }
+        db.query.conditions { type_is type }
       end
 
     end

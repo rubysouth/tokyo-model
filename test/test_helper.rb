@@ -12,7 +12,7 @@ def tmpdir
 end
 
 def dbpath
-  "#{tmpdir}/test.tdb"
+  "#{tmpdir}/test.tct"
 end
 
 def load_fixtures
@@ -26,3 +26,4 @@ end
 
 FileUtils.mkdir_p tmpdir
 TokyoModel.open("file:#{dbpath}", :write, :read, :create, :truncate)
+# TokyoModel.open("tyrant://127.0.0.1")
