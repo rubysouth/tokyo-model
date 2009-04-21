@@ -7,6 +7,7 @@ lib/tokyo_model/adapters/abstract_adapter.rb
 lib/tokyo_model/adapters/file.rb
 lib/tokyo_model/adapters/tyrant.rb
 lib/tokyo_model/persistable.rb
+lib/tokyo_model/query.rb
 script/console
 script/destroy
 script/generate
@@ -15,4 +16,5 @@ test/fixtures/post.rb
 test/test_basic_model.rb
 test/test_file_adapter.rb
 test/test_helper.rb
+test/test_query.rb
 tokyo_model.gemspec
