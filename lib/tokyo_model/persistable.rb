@@ -32,16 +32,21 @@ module TokyoModel
       alias_method :find, :get
 
       def setter_methods
-        instance_methods.select {|m| m =~ /[^=]$/ && instance_methods.include?("#{m}=") && !%w(taguri).include?(m) }
+        if !@setter_methods
+          im = instance_methods - Object.instance_methods
+          @setter_methods = im.select {|m| im.include?("#{m}=") && m =~ /[^=]$/ }
+        end
+        @setter_methods
       end
-      
+
       def find(&block)
         ids = query.conditions(&block).execute
         ids.inject([]) { |m, o| m << get(o); m }
       end
-      
+
       def query
-        Query.new(db).conditions { type_is "Post" }
+        type = self.to_s
+        Query.new(db).conditions { type_is type }
       end
 
     end
@@ -51,11 +56,12 @@ module TokyoModel
     end
 
     def attributes
-      self.class.setter_methods.inject({}) { |m, o|
-        v = send(o.to_sym)
-        m[o] = v if v
-        m
-      }
+      hash = {}
+      self.class.setter_methods.each do |s|
+        val = send(s.to_sym)
+        hash[s] = val if val
+      end
+      hash
     end
 
     def db
